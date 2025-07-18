@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Country Flashcards</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        margin: 0;
+        padding: 20px;
+      }
+
+      .flashcard-container {
+        perspective: 1000px;
+        width: 100%;
+        max-width: 500px;
+      }
+
+      .flashcard {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        transform-style: preserve-3d;
+        transition: transform 0.6s;
+        cursor: pointer;
+        margin-bottom: 20px;
+      }
+
+      .flashcard.flipped {
+        transform: rotateY(180deg);
+      }
+
+      .flashcard-front,
+      .flashcard-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        background-color: white;
+      }
+
+      .flashcard-back {
+        transform: rotateY(180deg);
+        background-color: #f8f9fa;
+      }
+
+      .word {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #2c3e50;
+        text-align: center;
+      }
+
+      .pronunciation {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        margin-bottom: 20px;
+        font-style: italic;
+      }
+
+      .country-name,
+      .language-name {
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+      .country-name {
+        color: #2980b9;
+        font-weight: bold;
+      }
+      .language-name {
+        color: #27ae60;
+      }
+
+      .example {
+        font-size: 1.1rem;
+        color: #34495e;
+        line-height: 1.5;
+        text-align: center;
+        font-style: italic;
+        border-left: 3px solid #3498db;
+        padding-left: 15px;
+        margin-top: 20px;
+      }
+
+      .nav-buttons {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 15px;
+      }
+
+      button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+
+      .progress {
+        text-align: center;
+        margin-top: 10px;
+        color: #7f8c8d;
+      }
+
+      @media (max-width: 600px) {
+        .word {
+          font-size: 2rem;
+        }
+        .translation {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="flashcard-container">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <div class="flashcard-front">
+          <div class="word" id="word">Vietnam</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="country-name">
+            Quốc gia:
+            <span id="country">Việt Nam</span>
+          </div>
+          <div class="language-name">
+            Ngôn ngữ:
+            <span id="language">Vietnamese</span>
+          </div>
+          <div class="pronunciation" id="pronunciation">/ˌviː.ətˈnɑː.miːz/</div>
+          <div class="example" id="example">I can speak Vietnamese.</div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button onclick="prevCard()">Previous</button>
+        <div class="progress">
+          <span id="current">1</span>
+          /
+          <span id="total">10</span>
+        </div>
+        <button onclick="nextCard()">Next</button>
+      </div>
+    </div>
+
+    <script>
+      const flashcards = [
+        {
+          word: 'Vietnam',
+          country: 'Việt Nam',
+          language: 'Vietnamese',
+          pronunciation: '/ˌviː.ətˈnɑː.miːz/',
+          example: 'I can speak Vietnamese.',
+        },
+        {
+          word: 'Japan',
+          country: 'Nhật Bản',
+          language: 'Japanese',
+          pronunciation: '/ˌdʒæp.ənˈiːz/',
+          example: 'She learns Japanese.',
+        },
+        {
+          word: 'China',
+          country: 'Trung Quốc',
+          language: 'Chinese',
+          pronunciation: '/ˌtʃaɪˈniːz/',
+          example: 'Do you speak Chinese?',
+        },
+        {
+          word: 'America (USA)',
+          country: 'Mỹ',
+          language: 'English',
+          pronunciation: '/ˈɪŋ.ɡlɪʃ/',
+          example: 'Americans speak English.',
+        },
+        {
+          word: 'France',
+          country: 'Pháp',
+          language: 'French',
+          pronunciation: '/frentʃ/',
+          example: 'He is learning French.',
+        },
+        {
+          word: 'Germany',
+          country: 'Đức',
+          language: 'German',
+          pronunciation: '/ˈdʒɜː.mən/',
+          example: 'German is a hard language.',
+        },
+        {
+          word: 'Korea',
+          country: 'Hàn Quốc',
+          language: 'Korean',
+          pronunciation: '/kəˈriː.ən/',
+          example: 'Korean dramas are popular.',
+        },
+        {
+          word: 'Thailand',
+          country: 'Thái Lan',
+          language: 'Thai',
+          pronunciation: '/taɪ/',
+          example: 'Thai is a tonal language.',
+        },
+        {
+          word: 'Russia',
+          country: 'Nga',
+          language: 'Russian',
+          pronunciation: '/ˈrʌʃ.ən/',
+          example: 'He speaks Russian fluently.',
+        },
+        {
+          word: 'Spain',
+          country: 'Tây Ban Nha',
+          language: 'Spanish',
+          pronunciation: '/ˈspæn.ɪʃ/',
+          example: 'She studies Spanish.',
+        },
+      ];
+
+      let currentCard = 0;
+      const totalCards = flashcards.length;
+
+      document.getElementById('total').textContent = totalCards;
+
+      function updateCard() {
+        const card = flashcards[currentCard];
+        document.getElementById('word').textContent = card.word;
+        document.getElementById('country').textContent = card.country;
+        document.getElementById('language').textContent = card.language;
+        document.getElementById('pronunciation').textContent =
+          card.pronunciation;
+        document.getElementById('example').textContent = card.example;
+        document.getElementById('current').textContent = currentCard + 1;
+
+        // Reset card to front when changing
+        const flashcard = document.getElementById('flashcard');
+        if (flashcard.classList.contains('flipped')) {
+          flashcard.classList.remove('flipped');
+        }
+      }
+
+      function flipCard() {
+        document.getElementById('flashcard').classList.toggle('flipped');
+      }
+
+      function nextCard() {
+        currentCard = (currentCard + 1) % totalCards;
+        updateCard();
+      }
+
+      function prevCard() {
+        currentCard = (currentCard - 1 + totalCards) % totalCards;
+        updateCard();
+      }
+
+      // Initialize first card
+      updateCard();
+
+      // Add keyboard navigation
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') {
+          nextCard();
+        } else if (e.key === 'ArrowLeft') {
+          prevCard();
+        } else if (e.key === ' ' || e.key === 'Enter') {
+          flipCard();
+        }
+      });
+    </script>
+  </body>
+</html>
+
